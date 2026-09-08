@@ -17,3 +17,7 @@ instance/
 
 # Config local de ferramentas de dev
 .claude/
+
+# Java (TPs da faculdade)
+faculdade/**/out/
+*.class
