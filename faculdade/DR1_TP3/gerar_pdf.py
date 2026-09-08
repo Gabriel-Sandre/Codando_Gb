@@ -13,8 +13,11 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import (
     BaseDocTemplate,
+    Image as Imagem,
     Frame,
     KeepTogether,
+    NextPageTemplate,
+    PageBreak,
     PageTemplate,
     Paragraph,
     Preformatted,
@@ -26,6 +29,13 @@ from reportlab.platypus import (
 BASE = Path(__file__).parent
 SRC = BASE / "src"
 SAIDAS = BASE / "saidas"
+PRINTS = BASE / "prints"
+LOGO = BASE / "assets" / "logo_infnet.png"
+
+TITULO_DISCIPLINA = "Fundamentos de Desenvolvimento com Java"
+NOME_ALUNO = "Gabriel Alves Sandre da silva"
+DATA_ENTREGA = "07/08/2026"
+IDENTIFICACAO_TP = "TP-3"
 DESTINO = BASE / "gabriel_alves_sandre_da_silva_DR1_TP3.PDF"
 
 AZUL = colors.HexColor("#1F3864")
@@ -33,6 +43,7 @@ CINZA_TEXTO = colors.HexColor("#333333")
 FUNDO_CODIGO = colors.HexColor("#F4F6FA")
 BORDA_CODIGO = colors.HexColor("#C9D2E3")
 FUNDO_SAIDA = colors.HexColor("#F2F2F2")
+AZUL_CAPA = colors.HexColor("#EEF6FF")
 BORDA_SAIDA = colors.HexColor("#CCCCCC")
 
 estilos = getSampleStyleSheet()
@@ -152,6 +163,105 @@ def saida(nome_classe, largura):
     ]
 
 
+def capa(canvas, doc):
+    """Desenha a capa institucional (mesmo layout das entregas anteriores)."""
+    largura, altura = A4
+    canvas.saveState()
+
+    def y(pt_do_topo):
+        return altura - pt_do_topo
+
+    canvas.setFillColor(AZUL_CAPA)
+    canvas.rect(0, 0, largura, altura, stroke=0, fill=1)
+    canvas.setFillColor(colors.white)
+    canvas.rect(86, y(162), 457, 75, stroke=0, fill=1)   # caixa do título
+    canvas.rect(0, y(312), largura, 150, stroke=0, fill=1)  # faixa do aluno/data
+    canvas.rect(0, 0, largura, 48, stroke=0, fill=1)     # faixa do rodapé
+
+    canvas.setFillColor(colors.HexColor("#1A1A1A"))
+    canvas.setFont("Helvetica", 27)
+    linhas_titulo = quebrar_titulo(TITULO_DISCIPLINA, "Helvetica", 27, 440)
+    for indice, linha in enumerate(linhas_titulo):
+        canvas.drawString(89, y(119 + indice * 38), linha)
+
+    canvas.setFont("Helvetica-Bold", 14)
+    canvas.drawString(89, y(258), f"Aluno: {NOME_ALUNO}")
+    canvas.drawString(73, y(301), DATA_ENTREGA)
+
+    canvas.setFont("Helvetica", 40)
+    canvas.drawString(73, y(417), IDENTIFICACAO_TP)
+
+    if LOGO.exists():
+        canvas.drawImage(
+            str(LOGO), 60, y(583), width=347, height=96,
+            preserveAspectRatio=True, anchor="sw", mask="auto",
+        )
+
+    canvas.restoreState()
+
+
+def quebrar_titulo(texto, fonte, tamanho, largura_maxima):
+    """Quebra o título da capa em linhas que caibam na caixa branca."""
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    linhas, atual = [], ""
+    for palavra in texto.split():
+        tentativa = f"{atual} {palavra}".strip()
+        if stringWidth(tentativa, fonte, tamanho) <= largura_maxima or not atual:
+            atual = tentativa
+        else:
+            linhas.append(atual)
+            atual = palavra
+    if atual:
+        linhas.append(atual)
+    return linhas
+
+
+def prints_disponiveis():
+    """Imagens colocadas em prints/, em ordem alfabética."""
+    if not PRINTS.exists():
+        return []
+    extensoes = {".png", ".jpg", ".jpeg"}
+    return sorted(p for p in PRINTS.iterdir() if p.suffix.lower() in extensoes)
+
+
+LEGENDAS_PRINTS = {
+    "01-compilacao": "Compilação das classes com javac",
+    "02-execucao-produto": "Execução: exercício 1 (Carro) e exercícios 4, 5 e 6 (Produto)",
+    "03-execucao-conta-figuras": "Execução: exercício 9 (Conta) e exercício 12 (figuras geométricas)",
+}
+
+
+def legenda_do_print(caminho):
+    """Legenda do print: usa o texto conhecido ou, se não houver, o nome do arquivo."""
+    if caminho.stem in LEGENDAS_PRINTS:
+        return LEGENDAS_PRINTS[caminho.stem]
+    nome = caminho.stem
+    if "-" in nome and nome.split("-")[0].isdigit():
+        nome = nome.split("-", 1)[1]
+    return nome.replace("-", " ").replace("_", " ").capitalize()
+
+
+def bloco_print(caminho, largura_maxima):
+    """Imagem do print ajustada à largura do texto, com legenda."""
+    from reportlab.lib.utils import ImageReader
+
+    largura_px, altura_px = ImageReader(str(caminho)).getSize()
+    largura = min(largura_maxima, largura_px * 0.75)
+    altura = largura * altura_px / largura_px
+    altura_maxima = 20 * cm
+    if altura > altura_maxima:
+        largura *= altura_maxima / altura
+        altura = altura_maxima
+    return [
+        KeepTogether([
+            Paragraph(legenda_do_print(caminho), ESTILO_LEGENDA),
+            Imagem(str(caminho), width=largura, height=altura),
+        ]),
+        Spacer(1, 10),
+    ]
+
+
 def rodape(canvas, doc):
     canvas.saveState()
     canvas.setFont("Helvetica", 8)
@@ -173,10 +283,16 @@ def construir():
         subject="Competencia: escrever programas em Java que utilizem classes e objetos",
     )
     frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="corpo")
-    doc.addPageTemplates([PageTemplate(id="padrao", frames=[frame], onPage=rodape)])
+    frame_capa = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="capa")
+    doc.addPageTemplates([
+        PageTemplate(id="capa", frames=[frame_capa], onPage=capa),
+        PageTemplate(id="padrao", frames=[frame], onPage=rodape),
+    ])
     L = doc.width
 
     e = []
+    e.append(NextPageTemplate("padrao"))
+    e.append(PageBreak())
     e.append(Paragraph("DR1 – TP3", ESTILO_TITULO))
     e.append(Paragraph("Programação Orientada a Objetos em Java", ESTILO_SUBTITULO))
     e.append(Paragraph("Aluno: Gabriel Alves Sandre da Silva", ESTILO_ALUNO))
@@ -470,6 +586,16 @@ public class Esfera {
         "java -cp out TestaConta      # Exercício 9\n"
         "java -cp out TestaFiguras    # Exercício 12",
         ESTILO_CODIGO, FUNDO_CODIGO, BORDA_CODIGO, L)))
+
+    imagens = prints_disponiveis()
+    if imagens:
+        e.append(PageBreak())
+        e.append(Paragraph("Anexo – Prints da execução", ESTILO_SECAO))
+        e.append(Paragraph(
+            "Registros da compilação e da execução dos programas deste trabalho.",
+            ESTILO_TEXTO))
+        for caminho in imagens:
+            e += bloco_print(caminho, L)
 
     doc.build(e)
     print(f"PDF gerado: {DESTINO}")
