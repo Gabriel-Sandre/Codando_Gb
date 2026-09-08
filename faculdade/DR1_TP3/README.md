@@ -16,6 +16,9 @@ no PDF de entrega são as saídas reais dos programas.
 | --- | --- |
 | `src/` | Código-fonte Java, uma classe pública por arquivo |
 | `saidas/` | Saídas de console de cada execução, usadas no PDF |
+| `prints/` | Prints da compilação e da execução (viram o anexo final do PDF) |
+| `assets/` | Logo do Instituto Infnet usado na capa |
+| `gerar_prints.py` | Executa o código e transforma a saída real do terminal em imagem |
 | `executar.sh` | Compila tudo, executa as classes com `main` e regrava `saidas/` |
 | `gerar_pdf.py` | Gera o PDF de entrega a partir de `src/` e `saidas/` (ReportLab) |
 
@@ -58,7 +61,12 @@ Requisitos: JDK 17 ou superior (testado com OpenJDK 21).
 ## Como regerar o PDF
 
 ```bash
-pip install reportlab
-./executar.sh        # atualiza as saídas do console
-python3 gerar_pdf.py # regera o PDF de entrega
+pip install reportlab pillow
+./executar.sh          # atualiza as saídas do console
+python3 gerar_prints.py # regera os prints do terminal (opcional)
+python3 gerar_pdf.py    # regera o PDF de entrega, já com capa e anexo de prints
 ```
+
+A capa (título, aluno, data e identificação do TP) fica nas constantes do topo de
+`gerar_pdf.py`. Qualquer imagem colocada em `prints/` entra automaticamente no
+anexo final do PDF, em ordem alfabética — basta nomear com prefixo numérico.
