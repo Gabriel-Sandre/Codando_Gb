@@ -1,0 +1,11 @@
+Nome: Arroz
+Preço: 27.5
+Quantidade em estoque: 15
+
+Nome: Feijão
+Preço: 3.75
+Quantidade em estoque: 20
+
+Nome: Leite
+Preço: 5.5
+Quantidade em estoque: 30

@@ -1,0 +1,7 @@
+Titular: Gabriel Alves Sandre da Silva
+Conta: 1234 / Agência: 0001
+Data de abertura: 08/09/2026
+Saldo inicial: 1000.0
+Saldo após saque de 200.00: 800.0
+Saldo após depósito de 500.00: 1300.0
+Rendimento (10% do saldo): 130.0
