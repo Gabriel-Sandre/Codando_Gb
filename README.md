@@ -1,4 +1,4 @@
-# Gabriel Sandre — Portfólio
+# Projetos em Python — Gabriel Sandre
 
 ![Tests](https://img.shields.io/github/actions/workflow/status/Gabriel-Sandre/Codando_Gb/tests.yml?branch=main&style=flat-square&label=tests)
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white)
@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/github/license/Gabriel-Sandre/Codando_Gb?style=flat-square)
 ![Last commit](https://img.shields.io/github/last-commit/Gabriel-Sandre/Codando_Gb?style=flat-square)
 
-Repositório com projetos desenvolvidos para praticar e demonstrar habilidades em desenvolvimento web e programação, com foco em vagas de estágio em tecnologia. Cada projeto é funcional, testado e documentado individualmente.
+Três aplicações em Python, feitas para exercitar back-end, banco de dados e testes — não são exercícios soltos: cada uma roda, tem README próprio, testes com pytest e instruções de execução. Escrito enquanto busco minha primeira vaga como desenvolvedor júnior.
 
 ## 🧩 Projetos
 
