@@ -52,6 +52,11 @@ Cronômetro Pomodoro com interface gráfica em Tkinter, alternando entre sessõe
 
 Em desenvolvimento — este repositório é atualizado conforme novos projetos são concluídos. Cada projeto tem seu próprio README com detalhes de funcionalidades, stack e instruções para rodar localmente.
 
+## 🎓 Faculdade
+
+Trabalhos da graduação no Instituto Infnet (Java, C#, Python e SQL) ficam em
+[`faculdade/`](./faculdade), separados dos projetos de portfólio acima.
+
 ## 📫 Contato
 
 [![GitHub](https://img.shields.io/badge/GitHub-@Gabriel--Sandre-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/Gabriel-Sandre)
