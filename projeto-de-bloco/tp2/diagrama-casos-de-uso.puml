@@ -1,0 +1,122 @@
+@startuml
+' TP2 — Diagrama de Casos de Uso
+' Sistema de Gestão de Programas de Estágio
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F4F8FC
+  BorderColor #2F5D8A
+  ArrowColor #3A3A3A
+}
+skinparam rectangle {
+  BorderColor #2F5D8A
+  FontSize 14
+}
+
+actor "Gestor da Área" as G
+actor "Estudante" as E
+actor "Analista de RH" as RH
+actor "Coordenador da\nInstituição de Ensino" as C
+actor "Agendador\n(tempo do sistema)" as T <<sistema>>
+
+rectangle "Sistema de Gestão de Programas de Estágio" {
+
+  package "Vagas" {
+    usecase "UC01 Solicitar abertura\nde vaga" as UC01
+    usecase "UC02 Revisar vaga" as UC02
+    usecase "UC03 Aprovar e\ndivulgar vaga" as UC03
+    usecase "UC04 Devolver vaga\npara correção" as UC04
+  }
+
+  package "Candidatura e seleção" {
+    usecase "UC05 Consultar vagas" as UC05
+    usecase "UC06 Registrar\ncandidatura" as UC06
+    usecase "UC07 Acompanhar\ncandidatos" as UC07
+    usecase "UC08 Registrar resultado\nda seleção" as UC08
+    usecase "UC09 Agendar\nentrevista" as UC09
+    usecase "UC10 Comunicar\nagendamento" as UC10
+  }
+
+  package "Contratação" {
+    usecase "UC22 Confirmar vínculo\ndo estudante" as UC22
+    usecase "UC11 Registrar\ncontratação" as UC11
+  }
+
+  package "Acompanhamento do estágio" {
+    usecase "UC12 Cadastrar plano\nde atividades" as UC12
+    usecase "UC13 Atualizar plano\nde atividades" as UC13
+    usecase "UC14 Registrar avaliação\nde desempenho" as UC14
+    usecase "UC15 Avisar sobre\nprazos" as UC15
+    usecase "UC19 Consultar situação\ndo estágio" as UC19
+  }
+
+  package "Encerramento do contrato" {
+    usecase "UC16 Registrar\nprorrogação" as UC16
+    usecase "UC17 Registrar\ndesligamento" as UC17
+    usecase "UC18 Registrar\nefetivação" as UC18
+  }
+
+  package "Relatórios" {
+    usecase "UC20 Gerar relatório\nde acompanhamento" as UC20
+    usecase "UC21 Gerar visão\nconsolidada" as UC21
+    usecase "UC23 Receber relatório\nperiódico" as UC23
+  }
+}
+
+' --- Gestor da área
+G --> UC01
+G --> UC07
+G --> UC08
+G --> UC12
+G --> UC13
+G --> UC14
+G <-- UC15
+
+' --- Estudante
+E --> UC05
+E --> UC06
+E --> UC19
+E <-- UC10
+
+' --- Analista de RH
+UC02 <-- RH
+UC07 <-- RH
+UC08 <-- RH
+UC09 <-- RH
+UC11 <-- RH
+UC16 <-- RH
+UC17 <-- RH
+UC18 <-- RH
+UC20 <-- RH
+UC21 <-- RH
+UC15 --> RH
+
+' --- Coordenador da instituição de ensino
+UC22 <-- C
+UC20 --> C
+UC23 --> C
+
+' --- Agendador (ator de sistema: dispara os casos de uso temporais)
+UC15 <-- T
+UC23 <-- T
+
+' --- Relacionamentos entre casos de uso
+UC03 .> UC02 : <<extend>>
+UC04 .> UC02 : <<extend>>
+UC06 .> UC05 : <<extend>>
+UC09 .> UC10 : <<include>>
+UC11 .> UC22 : <<include>>\n(verifica confirmação)
+UC16 .> UC14 : <<include>>\n(verifica avaliações)
+
+
+
+legend right
+  Seta ator → caso de uso: o ator inicia / fornece informação
+  Seta caso de uso → ator: o ator recebe informação (consumidor)
+  Detalhe de fornecedor/consumidor: tabela da seção 6
+endlegend
+@enduml
