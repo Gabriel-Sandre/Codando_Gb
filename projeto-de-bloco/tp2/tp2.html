@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Gabriel Sandre — PB TP2</title>
+<style>
+  @page { size: A4; margin: 17mm 16mm 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 9.6pt; line-height: 1.42; color: #1d1d1f; margin: 0; }
+  h1 { font-size: 16pt; margin: 0 0 2px; }
+  .sub { color: #555; font-size: 9pt; margin-bottom: 14px; border-bottom: 2px solid #1f4e79; padding-bottom: 8px; }
+  h2 { font-size: 12.5pt; color: #1f4e79; margin: 20px 0 6px; border-bottom: 1px solid #c9d6e3; padding-bottom: 3px; }
+  h3 { font-size: 10.5pt; margin: 14px 0 4px; }
+  p { margin: 5px 0; text-align: justify; }
+  table { border-collapse: collapse; width: 100%; margin: 6px 0 10px; }
+  th, td { border: 1px solid #b8c4d0; padding: 4px 6px; vertical-align: top; text-align: left; }
+  th { background: #e8eef5; font-size: 8.8pt; }
+  .quebra { page-break-before: always; }
+  .nq { page-break-inside: avoid; }
+
+  .uc-box { border: 1px solid #b8c4d0; margin: 10px 0 12px; page-break-inside: avoid; }
+  .uc-box > h3 { margin: 0; background: #1f4e79; color: #fff; padding: 5px 8px; font-size: 10pt; }
+  .uc-box table { margin: 0; border: 0; }
+  .uc-box td { border: 0; border-bottom: 1px solid #e1e7ee; padding: 3px 8px; }
+  .uc-box td.k { width: 23%; font-weight: bold; color: #1f4e79; background: #f5f8fb; }
+  .uc-box ol, .uc-box ul { margin: 2px 0; padding-left: 18px; }
+  .uc-box li { margin: 1px 0; }
+
+  table.mapa th { text-align: center; font-size: 8.2pt; }
+  table.mapa td.p { text-align: center; font-weight: bold; width: 10.5%; }
+  table.mapa td.uc, table.mapa th.uc { text-align: left; width: 37%; font-size: 8.8pt; }
+  table.mapa td.f { background: #dcebdc; }
+  table.mapa td.c { background: #fdecd2; }
+  table.mapa td.fc { background: #dfe6f5; }
+  table.mapa tr.grupo td { background: #f0f0f0; font-weight: bold; font-size: 8.6pt; }
+  table.mapa tr.extra td.uc { font-style: italic; }
+  table.mapa td, table.mapa th { padding: 3px 5px; }
+
+  .legenda { font-size: 8.6pt; color: #333; }
+  .legenda span { display: inline-block; padding: 0 5px; border: 1px solid #b8c4d0; margin-right: 4px; font-weight: bold; }
+
+  svg.uml { width: 100%; height: auto; display: block; margin: 4px auto; }
+  svg.uml .fronteira { fill: #fafcfe; stroke: #1f4e79; stroke-width: 1.4; }
+  svg.uml .sistema { font: bold 12px "DejaVu Sans", sans-serif; text-anchor: middle; fill: #1f4e79; }
+  svg.uml .uc { fill: #fffbe6; stroke: #7a6a1f; stroke-width: 1.2; }
+  svg.uml .cod { font: bold 9.5px "DejaVu Sans", sans-serif; text-anchor: middle; fill: #555; }
+  svg.uml .nome { font: 10.5px "DejaVu Sans", sans-serif; text-anchor: middle; fill: #111; }
+  svg.uml .assoc { stroke: #6b7c8f; stroke-width: 0.9; }
+  svg.uml .ponta { fill: none; stroke: #33475c; stroke-width: 1.1; }
+  svg.uml .tracejada { stroke: #33475c; stroke-width: 1; stroke-dasharray: 4 3; }
+  svg.uml .traco { fill: #fff; stroke: #111; stroke-width: 1.5; }
+  svg.uml .caixa { fill: #fff; stroke: #111; stroke-width: 1.3; }
+  svg.uml .ator { font: bold 10.5px "DejaVu Sans", sans-serif; text-anchor: middle; fill: #111; }
+  svg.uml .estereo { font: italic 9.5px "DejaVu Sans", sans-serif; text-anchor: middle; fill: #444; }
+  svg.uml .icone { font: 18px "DejaVu Sans", sans-serif; text-anchor: middle; fill: #333; }
+  .fig { text-align: center; font-size: 8.8pt; color: #444; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<h1>Casos de Uso — Sistema de Gestão de Programas de Estágio</h1>
+<div class="sub">Gabriel Alves Sandre da Silva · Projeto de Bloco: Desenvolvimento Back-End — TP2 · RUP, fase de Iniciação · 29/09/2026</div>
+
+<h2>1. Introdução</h2>
+<p>No TP1 levantei os requisitos de um sistema que centraliza o programa de estágio de uma empresa de médio porte. Hoje esse programa depende de planilhas e de e-mails trocados entre o RH, os gestores e as instituições de ensino. Este documento é a segunda entrega do projeto. Ele transforma aqueles requisitos (RF01 a RF12 e as quatro regras de negócio) em casos de uso, que descrevem quem interage com o sistema, com qual objetivo e o que acontece em cada cenário.</p>
+<p>Como seguimos o RUP na fase de Iniciação, o objetivo aqui não é esgotar os detalhes, mas deixar o escopo e as interações claros o bastante para validar com o cliente. Os casos de uso UC01 a UC13 cobrem o que a especificação pede. Os casos UC14 a UC20 são propostas minhas, que ainda precisam ser confirmadas com os futuros usuários. Para facilitar a leitura, as regras do TP1 aparecem com códigos:</p>
+<table class="nq">
+  <tr><th style="width:9%">Código</th><th>Regra de negócio (TP1)</th></tr>
+  <tr><td>RN01</td><td>Um estudante não pode ter mais de um contrato de estágio ativo na empresa ao mesmo tempo.</td></tr>
+  <tr><td>RN02</td><td>A duração total do estágio, somadas as prorrogações, respeita o limite definido pela política do programa.</td></tr>
+  <tr><td>RN03</td><td>A contratação só pode ser registrada após a confirmação do vínculo do estudante com a instituição de ensino.</td></tr>
+  <tr><td>RN04</td><td>A avaliação periódica é obrigatória, e sua ausência impede o registro da prorrogação do contrato.</td></tr>
+</table>
+
+<h2>2. Atores</h2>
+<p>Ator é qualquer papel externo que troca informação com o sistema. Os quatro usuários do TP1 viram atores humanos. Somei a eles dois atores não humanos que aparecem nos requisitos: o envio de comunicações (RF05 e RF09) e a passagem do tempo, que dispara os avisos de prazo (RF09). O setor financeiro não é ator, porque a bolsa-auxílio ficou fora do escopo desta versão.</p>
+<table>
+  <tr><th style="width:19%">Ator</th><th style="width:17%">Tipo</th><th>Descrição e interesse no sistema</th></tr>
+  <tr><td><b>Analista de RH</b></td><td>Humano, primário</td><td>Conduz o programa. Revisa e divulga vagas, acompanha a seleção, formaliza a contratação, registra o encerramento dos contratos, cobra pendências e gera relatórios. Quer menos retrabalho e uma visão consolidada do programa.</td></tr>
+  <tr><td><b>Gestor da área</b></td><td>Humano, primário</td><td>Solicita a vaga, participa da seleção e, depois da contratação, atua como supervisor: mantém o plano de atividades e preenche as avaliações. Quer visibilidade sobre cada estagiário sob sua supervisão.</td></tr>
+  <tr><td><b>Estudante</b></td><td>Humano, primário</td><td>Tem dois papéis ao longo do tempo: <i>candidato</i> (consulta vagas, candidata-se e acompanha a seleção) e <i>estagiário</i> (consulta contrato, plano e avaliações). Modelei como um único ator, porque é a mesma pessoa com o mesmo cadastro. Quer transparência sobre sua situação.</td></tr>
+  <tr><td><b>Coordenador da IE</b></td><td>Humano, primário em UC06 e secundário nos demais</td><td>Representa a instituição de ensino. Confirma o vínculo do estudante com o curso e recebe os relatórios periódicos. Quer que a legislação e o convênio sejam cumpridos.</td></tr>
+  <tr><td><b>Serviço de E-mail</b></td><td>Sistema externo, secundário</td><td>Serviço corporativo de mensagens que entrega convites de entrevista, pedidos de confirmação e avisos de prazo. Só recebe informação do sistema.</td></tr>
+  <tr><td><b>Temporizador</b></td><td>Ator de tempo, primário em UC10</td><td>Representa a rotina agendada (por exemplo, diária) que inicia a verificação de prazos. Não é uma pessoa, mas é ele quem dispara o caso de uso.</td></tr>
+</table>
+
+<h2>3. Funcionalidades e interações</h2>
+<p>As funcionalidades acompanham o ciclo de vida de um estágio. Em cada fase, a tabela mostra quem age e o que o sistema devolve.</p>
+<table>
+  <tr><th style="width:17%">Fase</th><th style="width:28%">Funcionalidades (casos de uso)</th><th>Interação ator ↔ sistema</th></tr>
+  <tr><td><b>Vaga</b></td><td>UC01 Solicitar abertura de vaga<br>UC02 Revisar e divulgar vaga</td><td>O gestor informa a necessidade. O sistema guarda a solicitação e a apresenta ao RH, que aprova e divulga ou devolve com observações. O sistema torna a vaga visível ou avisa o gestor.</td></tr>
+  <tr><td><b>Seleção</b></td><td>UC03 Consultar vagas e candidatar-se<br>UC04 Acompanhar processo seletivo<br>UC05 Agendar entrevista</td><td>O estudante vê as vagas e envia seus dados de formação. RH e gestor recebem a lista de candidatos e registram o resultado de cada etapa. As entrevistas são agendadas e comunicadas ao candidato por e-mail e na área do estudante.</td></tr>
+  <tr><td><b>Contratação</b></td><td>UC06 Confirmar vínculo com a IE<br>UC07 Registrar contratação</td><td>O coordenador recebe o pedido e confirma o vínculo. Só então o RH consegue registrar o contrato (RN03). O sistema confere RN01 e RN02 e gera o calendário de avaliações.</td></tr>
+  <tr><td><b>Acompanhamento</b></td><td>UC08 Manter plano de atividades<br>UC09 Registrar avaliação periódica<br>UC10 Notificar prazos a vencer<br>UC12 Consultar situação do estágio</td><td>O gestor alimenta o plano e as avaliações. O estagiário consulta o que foi registrado. Todo dia, o temporizador faz o sistema procurar prazos próximos e avisar os responsáveis.</td></tr>
+  <tr><td><b>Encerramento e gestão</b></td><td>UC11 Registrar encerramento ou prorrogação<br>UC13 Gerar relatórios de acompanhamento</td><td>O RH registra a prorrogação, o desligamento ou a efetivação, e o sistema aplica RN02 e RN04. Os relatórios vão para a instituição de ensino e compõem a visão consolidada do RH.</td></tr>
+</table>
+
+<h3>Rastreabilidade: requisito → caso de uso</h3>
+<table class="nq">
+  <tr><th>RF01</th><th>RF02</th><th>RF03</th><th>RF04</th><th>RF05</th><th>RF06</th><th>RF07</th><th>RF08</th><th>RF09</th><th>RF10</th><th>RF11</th><th>RF12</th><th>RN03</th></tr>
+  <tr><td>UC01</td><td>UC02</td><td>UC03</td><td>UC04</td><td>UC05</td><td>UC07</td><td>UC08</td><td>UC09</td><td>UC10</td><td>UC11</td><td>UC12</td><td>UC13</td><td>UC06</td></tr>
+</table>
+
+<h2 class="quebra">4. Casos de uso requeridos</h2>
+<p>Cada caso de uso traz os atores, as condições de entrada e saída, o fluxo principal (o cenário em que tudo dá certo) e os fluxos alternativos. Em um fluxo alternativo, o código "4a" indica um desvio a partir do passo 4.</p>
+
+<div class="uc-box"><h3>UC01 — Solicitar abertura de vaga</h3><table>
+<tr><td class="k">Origem</td><td>RF01</td></tr>
+<tr><td class="k">Ator principal</td><td>Gestor da área</td></tr>
+<tr><td class="k">Atores secundários</td><td>Analista de RH (recebe a solicitação)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Gestor autenticado no sistema.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O gestor escolhe "Nova solicitação de vaga".</li>
+  <li>O sistema exibe o formulário: área, atividades previstas, carga horária, período desejado, quantidade de vagas e requisitos de formação.</li>
+  <li>O gestor preenche e envia.</li>
+  <li>O sistema valida os campos obrigatórios e a carga horária máxima da política do programa.</li>
+  <li>O sistema registra a solicitação como "Aguardando revisão" e a coloca na fila do RH.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>3a.</b> O gestor salva como rascunho. O status fica "Rascunho" e ele pode concluir depois.</li>
+  <li><b>4a.</b> Há dados faltando ou carga horária acima do permitido. O sistema aponta os campos e volta ao passo 3.</li>
+  <li><b>5a.</b> Se a solicitação voltar do RH (UC02, 4a), o gestor edita e reenvia, e o fluxo segue do passo 4.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Solicitação registrada e visível ao RH.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC02 — Revisar e divulgar vaga</h3><table>
+<tr><td class="k">Origem</td><td>RF02</td></tr>
+<tr><td class="k">Ator principal</td><td>Analista de RH</td></tr>
+<tr><td class="k">Atores secundários</td><td>Gestor da área (recebe o retorno)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Existe solicitação com status "Aguardando revisão".</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O analista abre a lista de solicitações pendentes.</li>
+  <li>O sistema exibe os detalhes da solicitação escolhida.</li>
+  <li>O analista revisa o texto de divulgação e define o período de inscrições.</li>
+  <li>O analista aprova e divulga.</li>
+  <li>O sistema muda o status para "Divulgada", publica a vaga para os estudantes e avisa o gestor.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>4a.</b> O analista devolve a solicitação ao gestor. As observações são obrigatórias. O status vira "Devolvida" e o gestor é avisado.</li>
+  <li><b>4b.</b> O analista cancela a solicitação, informando o motivo (por exemplo, sem orçamento). O status vira "Cancelada".</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Vaga divulgada, ou devolvida ou cancelada com justificativa.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC03 — Consultar vagas e candidatar-se</h3><table>
+<tr><td class="k">Origem</td><td>RF03</td></tr>
+<tr><td class="k">Ator principal</td><td>Estudante</td></tr>
+<tr><td class="k">Pré-condição</td><td>Existe vaga divulgada com inscrições abertas.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O estudante acessa a página de vagas.</li>
+  <li>O sistema lista as vagas divulgadas, com filtros por área, carga horária e curso.</li>
+  <li>O estudante abre uma vaga e escolhe "Candidatar-me".</li>
+  <li>O sistema pede identificação (login ou cadastro) e os dados de formação: instituição, curso, período atual e previsão de conclusão.</li>
+  <li>O estudante confirma os dados.</li>
+  <li>O sistema confere se as inscrições estão abertas e se não há candidatura repetida para a mesma vaga.</li>
+  <li>O sistema registra a candidatura como "Inscrito" e mostra o comprovante.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>6a.</b> O estudante já é candidato nessa vaga. O sistema informa e mostra a candidatura existente.</li>
+  <li><b>6b.</b> As inscrições foram encerradas durante o preenchimento. O sistema informa e não registra.</li>
+  <li><b>6c.</b> O estudante tem contrato ativo na empresa (RN01). O sistema registra a candidatura, mas avisa que ela só poderá virar contratação quando o contrato atual terminar. Esse ponto está entre os que devem ser validados na seção 5.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Candidatura registrada e visível ao RH e ao gestor (UC04).</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC04 — Acompanhar processo seletivo</h3><table>
+<tr><td class="k">Origem</td><td>RF04</td></tr>
+<tr><td class="k">Atores principais</td><td>Analista de RH e gestor da área</td></tr>
+<tr><td class="k">Atores secundários</td><td>Estudante (acompanha o status da própria candidatura)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Vaga divulgada com pelo menos uma candidatura.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O usuário (RH ou gestor) seleciona a vaga.</li>
+  <li>O sistema lista os candidatos com a etapa atual de cada um (triagem, entrevista, decisão).</li>
+  <li>O usuário escolhe um candidato e registra o resultado da etapa (aprovado ou reprovado) e uma observação.</li>
+  <li>O sistema grava o resultado no histórico, avança a etapa e atualiza o status mostrado ao estudante.</li>
+  <li>Na última etapa, o usuário marca o candidato como "Selecionado".</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>3a.</b> A etapa exige entrevista. O usuário executa o UC05 (relação «extend»).</li>
+  <li><b>3b.</b> Candidato reprovado. O status vira "Não selecionado" e o estudante recebe uma mensagem de retorno padrão.</li>
+  <li><b>5a.</b> O candidato tem contrato ativo (RN01). O sistema impede a seleção e informa o motivo.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Resultados registrados. O candidato selecionado fica pronto para UC06 e UC07.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC05 — Agendar entrevista</h3><table>
+<tr><td class="k">Origem</td><td>RF05 (estende o UC04)</td></tr>
+<tr><td class="k">Atores principais</td><td>Analista de RH ou gestor da área</td></tr>
+<tr><td class="k">Atores secundários</td><td>Estudante (recebe o convite) e Serviço de E-mail</td></tr>
+<tr><td class="k">Pré-condição</td><td>Candidato em etapa que prevê entrevista.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O usuário escolhe "Agendar entrevista" para o candidato.</li>
+  <li>O sistema pede data, horário, formato (presencial ou on-line), local ou link, e entrevistadores.</li>
+  <li>O usuário confirma.</li>
+  <li>O sistema verifica se há choque com outras entrevistas já marcadas para os mesmos entrevistadores.</li>
+  <li>O sistema registra a entrevista, envia o convite ao candidato pelo Serviço de E-mail e mostra o convite na área do estudante.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>4a.</b> Há conflito de horário. O sistema avisa e volta ao passo 2.</li>
+  <li><b>5a.</b> O envio do e-mail falha. O agendamento continua valendo e visível na área do estudante, e o sistema tenta reenviar depois.</li>
+  <li><b>A1.</b> Reagendamento ou cancelamento. O usuário altera a entrevista e o sistema comunica o candidato de novo.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Entrevista agendada e comunicada ao candidato.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC06 — Confirmar vínculo com a instituição de ensino</h3><table>
+<tr><td class="k">Origem</td><td>RN03 e papel do coordenador descrito no TP1</td></tr>
+<tr><td class="k">Ator principal</td><td>Coordenador da IE</td></tr>
+<tr><td class="k">Atores secundários</td><td>Analista de RH (solicita e recebe o resultado) e Serviço de E-mail</td></tr>
+<tr><td class="k">Pré-condição</td><td>Candidato "Selecionado". Instituição cadastrada com coordenador responsável.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O analista solicita a confirmação de vínculo do candidato selecionado.</li>
+  <li>O sistema envia ao coordenador, por e-mail, um pedido com link de acesso.</li>
+  <li>O coordenador acessa e vê os dados informados pelo estudante (curso, período, matrícula).</li>
+  <li>O coordenador confirma que a matrícula está ativa.</li>
+  <li>O sistema registra a confirmação com data e responsável, libera o UC07 e avisa o RH.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>4a.</b> O coordenador não confirma e informa o motivo. O sistema bloqueia a contratação e avisa o RH.</li>
+  <li><b>A1.</b> Não há resposta no prazo. O UC10 manda lembretes ao coordenador e avisa o RH.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Vínculo confirmado (contratação liberada) ou recusado com motivo.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC07 — Registrar contratação</h3><table>
+<tr><td class="k">Origem</td><td>RF06, RN01, RN02 e RN03</td></tr>
+<tr><td class="k">Ator principal</td><td>Analista de RH</td></tr>
+<tr><td class="k">Atores secundários</td><td>Gestor, estudante e coordenador da IE (recebem o contrato registrado)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Candidato "Selecionado" e vínculo confirmado (UC06).</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O analista escolhe "Registrar contratação" para o candidato.</li>
+  <li>O sistema preenche os dados da vaga e do estudante.</li>
+  <li>O analista informa a data de início, a data de término prevista, o supervisor responsável e a instituição de ensino.</li>
+  <li>O sistema valida RN01 (sem outro contrato ativo), RN02 (duração dentro do limite) e RN03 (vínculo confirmado).</li>
+  <li>O sistema cria o contrato como "Ativo", gera o calendário de avaliações conforme a periodicidade do programa e o disponibiliza ao gestor, ao estudante e à IE.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>4a.</b> O vínculo não está confirmado. O sistema impede o registro e oferece iniciar o UC06.</li>
+  <li><b>4b.</b> A duração passa do limite. O sistema mostra a data máxima permitida e volta ao passo 3.</li>
+  <li><b>4c.</b> Existe outro contrato ativo. O sistema impede o registro e mostra o contrato em vigor.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Contrato ativo, calendário de avaliações criado e vaga marcada como preenchida.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC08 — Manter plano de atividades</h3><table>
+<tr><td class="k">Origem</td><td>RF07</td></tr>
+<tr><td class="k">Ator principal</td><td>Gestor da área (supervisor)</td></tr>
+<tr><td class="k">Atores secundários</td><td>Estudante (consulta o plano)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Contrato ativo em que o gestor é o supervisor.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O gestor abre a ficha do estagiário e escolhe "Plano de atividades".</li>
+  <li>O sistema mostra o plano atual, ou um plano em branco baseado nas atividades da vaga.</li>
+  <li>O gestor inclui, altera ou remove atividades, objetivos e períodos.</li>
+  <li>O sistema salva uma nova versão e mantém o histórico das anteriores.</li>
+  <li>O sistema disponibiliza a nova versão ao estagiário.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>A1.</b> Se o plano não for cadastrado até o prazo definido após o início do contrato, o UC10 avisa o gestor.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Plano atualizado, versionado e visível ao estagiário.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC09 — Registrar avaliação periódica</h3><table>
+<tr><td class="k">Origem</td><td>RF08 e RN04</td></tr>
+<tr><td class="k">Ator principal</td><td>Gestor da área</td></tr>
+<tr><td class="k">Atores secundários</td><td>Estudante (consulta a avaliação) e Analista de RH (acompanha)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Contrato ativo com avaliação prevista no calendário.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O gestor abre suas avaliações pendentes.</li>
+  <li>O sistema exibe o formulário com os critérios definidos pelo programa.</li>
+  <li>O gestor atribui as notas e escreve os comentários.</li>
+  <li>O gestor conclui a avaliação.</li>
+  <li>O sistema registra a data, marca a avaliação como concluída, retira a pendência e a disponibiliza ao estagiário.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>3a.</b> O gestor salva um rascunho e conclui depois.</li>
+  <li><b>4a.</b> A avaliação está fora do prazo. O sistema aceita, mas registra o atraso (esse dado entra nos relatórios do UC13).</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Avaliação registrada. A pendência deixa de bloquear a prorrogação (RN04).</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC10 — Notificar prazos a vencer</h3><table>
+<tr><td class="k">Origem</td><td>RF09</td></tr>
+<tr><td class="k">Ator principal</td><td>Temporizador</td></tr>
+<tr><td class="k">Atores secundários</td><td>Serviço de E-mail. Analista de RH, gestor e coordenador da IE (recebem os avisos).</td></tr>
+<tr><td class="k">Pré-condição</td><td>Antecedência dos avisos configurada (UC20).</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>No horário agendado, o temporizador dispara a verificação.</li>
+  <li>O sistema procura: contratos que terminam dentro da antecedência configurada, avaliações a vencer ou atrasadas, planos de atividades não cadastrados e confirmações de vínculo sem resposta.</li>
+  <li>O sistema agrupa os itens por responsável.</li>
+  <li>O sistema envia um resumo por e-mail a cada responsável e mostra os avisos no painel dele.</li>
+  <li>O sistema registra quais avisos foram enviados, para não repeti-los no mesmo dia.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>2a.</b> Nada a avisar. O caso de uso termina.</li>
+  <li><b>4a.</b> O envio falha. O aviso fica no painel e é reenviado na próxima execução.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Responsáveis avisados e histórico de notificações registrado.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC11 — Registrar encerramento ou prorrogação do contrato</h3><table>
+<tr><td class="k">Origem</td><td>RF10, RN02 e RN04</td></tr>
+<tr><td class="k">Ator principal</td><td>Analista de RH</td></tr>
+<tr><td class="k">Atores secundários</td><td>Gestor (registra sua recomendação). Estudante e coordenador da IE (são informados).</td></tr>
+<tr><td class="k">Pré-condição</td><td>Contrato ativo.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O gestor registra sua recomendação para o fim do contrato: prorrogar, desligar ou efetivar.</li>
+  <li>O analista abre o contrato e vê a recomendação.</li>
+  <li>O analista escolhe a ação e informa o motivo, a data e, se for prorrogação, a nova data de término.</li>
+  <li>O sistema valida as regras que se aplicam à ação escolhida.</li>
+  <li>O sistema atualiza o contrato (prorrogado, encerrado ou efetivado), guarda o histórico e avisa o estudante e a IE.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>4a.</b> Prorrogação com avaliação pendente (RN04). O sistema impede e lista as avaliações em aberto.</li>
+  <li><b>4b.</b> A prorrogação passa do limite de duração (RN02). O sistema impede e mostra a data máxima.</li>
+  <li><b>A1.</b> Desligamento antecipado, antes da data prevista. O motivo é obrigatório e a IE é avisada na hora.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Situação do contrato atualizada, com motivo e histórico.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC12 — Consultar situação do estágio</h3><table>
+<tr><td class="k">Origem</td><td>RF11</td></tr>
+<tr><td class="k">Ator principal</td><td>Estudante</td></tr>
+<tr><td class="k">Pré-condição</td><td>Estudante autenticado.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O estudante acessa "Meu estágio".</li>
+  <li>O sistema mostra o contrato vigente (datas, supervisor, instituição) e o plano de atividades atual.</li>
+  <li>O sistema lista as avaliações recebidas e as pendências em aberto.</li>
+  <li>O estudante abre uma avaliação e vê as notas e os comentários.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>2a.</b> O estudante ainda não tem contrato. O sistema mostra as candidaturas e a etapa de cada uma.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Somente leitura. Nenhum dado é alterado.</td></tr>
+</table></div>
+
+<div class="uc-box"><h3>UC13 — Gerar relatórios de acompanhamento</h3><table>
+<tr><td class="k">Origem</td><td>RF12</td></tr>
+<tr><td class="k">Ator principal</td><td>Analista de RH</td></tr>
+<tr><td class="k">Atores secundários</td><td>Coordenador da IE (recebe o relatório da sua instituição)</td></tr>
+<tr><td class="k">Pré-condição</td><td>Existem contratos registrados.</td></tr>
+<tr><td class="k">Fluxo principal</td><td><ol>
+  <li>O analista escolhe o tipo: relatório para a instituição de ensino ou visão consolidada do programa.</li>
+  <li>O analista informa os filtros: período, instituição, área ou estagiário.</li>
+  <li>O sistema monta o relatório. Para a IE: atividades, avaliações e situação do contrato de cada estudante. Na visão consolidada: vagas abertas, candidaturas, estagiários ativos, avaliações atrasadas e contratos a vencer.</li>
+  <li>O analista exporta o relatório (PDF ou planilha) ou o envia à IE pelo sistema.</li></ol></td></tr>
+<tr><td class="k">Fluxos alternativos</td><td><ul>
+  <li><b>3a.</b> Não há dados para os filtros escolhidos. O sistema informa e volta ao passo 2.</li></ul></td></tr>
+<tr><td class="k">Pós-condição</td><td>Relatório gerado. Quando enviado, o envio fica registrado.</td></tr>
+</table></div>
+
+<h2 class="quebra">5. Casos de uso adicionais a explorar com os usuários</h2>
+<p>Estes casos de uso não estão escritos no TP1, mas surgiram quando pensei no sistema funcionando no dia a dia ou nas obrigações da Lei do Estágio (Lei 11.788/2008). Na fase de Iniciação, eles servem de pauta para as conversas com RH, gestores e instituições. Os que forem confirmados passam a ter especificação completa nas próximas entregas.</p>
+<table>
+  <tr><th style="width:24%">Caso de uso</th><th style="width:17%">Atores</th><th style="width:30%">Por que considerar</th><th>Pergunta para os usuários</th></tr>
+  <tr><td><b>UC14</b> Autenticar e gerir perfis de acesso</td><td>Todos. O RH administra os perfis.</td><td>Cada ator enxerga dados diferentes: o gestor só vê os estagiários dele, e o estudante só vê os próprios dados.</td><td>Os funcionários entram com o login corporativo (SSO)? Quem pode criar contas de coordenador?</td></tr>
+  <tr><td><b>UC15</b> Manter instituições de ensino</td><td>RH, coordenador da IE</td><td>UC06 e UC13 dependem de saber qual coordenador responde por cada instituição e se há convênio vigente.</td><td>A empresa usa um agente de integração (CIEE, por exemplo)? Se usar, ele seria um novo ator externo.</td></tr>
+  <tr><td><b>UC16</b> Registrar relatório de atividades</td><td>Estudante, gestor e coordenador</td><td>A lei exige relatório periódico de atividades, em prazo não superior a 6 meses. Hoje o TP1 só prevê a avaliação feita pelo gestor.</td><td>Quem redige o relatório: o estagiário, o gestor ou os dois? Ele substitui ou complementa a avaliação?</td></tr>
+  <tr><td><b>UC17</b> Gerir documentos do contrato</td><td>RH, estudante e coordenador</td><td>O termo de compromisso e os aditivos de prorrogação precisam de três assinaturas e hoje circulam por e-mail.</td><td>Os documentos ficam no sistema? Há integração com assinatura eletrônica?</td></tr>
+  <tr><td><b>UC18</b> Registrar recesso do estagiário</td><td>Gestor, estudante e RH</td><td>A lei garante 30 dias de recesso a cada ano de estágio. Isso afeta prazos de avaliação e relatórios.</td><td>O recesso é controlado pelo RH ou pelo gestor? Precisa aparecer no UC10?</td></tr>
+  <tr><td><b>UC19</b> Desistir de candidatura</td><td>Estudante, RH e gestor</td><td>Evita que RH e gestor gastem tempo com candidatos que já desistiram.</td><td>Até qual etapa o estudante pode desistir sozinho?</td></tr>
+  <tr><td><b>UC20</b> Configurar parâmetros do programa</td><td>Analista de RH</td><td>RN02, RF08 e RF09 citam "limite definido pela política" e "prazos definidos pelo programa". Esses valores precisam de um lugar para serem mantidos.</td><td>Quais valores mudam com frequência (limite de duração, periodicidade das avaliações, antecedência dos avisos, critérios de avaliação)?</td></tr>
+</table>
+<p>Além desses casos, dois pontos das regras merecem confirmação: <b>(1)</b> se um estudante com contrato ativo pode se candidatar a outra vaga (UC03, 6c), e <b>(2)</b> se a efetivação ao final do contrato também deve exigir a avaliação em dia, como a prorrogação exige pela RN04.</p>
+
+<h2>6. Mapeamento de atores para casos de uso</h2>
+<p class="legenda"><span style="background:#dcebdc">F</span> fornecedor: o ator envia informação ao sistema. <span style="background:#fdecd2">C</span> consumidor: o ator recebe informação do sistema. <span style="background:#dfe6f5">F/C</span> o ator faz os dois no mesmo caso de uso. Os casos adicionais (seção 5) aparecem em itálico.</p>
+<table class="mapa">
+<thead><tr><th class="uc">Caso de uso</th><th>Analista de RH</th><th>Gestor da área</th><th>Estudante</th><th>Coordenador da IE</th><th>Serviço de E-mail</th><th>Temporizador</th></tr></thead>
+<tbody>
+<tr class="grupo"><td colspan="7">Casos de uso requeridos (RF01–RF12 e regras do TP1)</td></tr>
+<tr class=""><td class="uc"><b>UC01</b> Solicitar abertura de vaga</td><td class="p c">C</td><td class="p f">F</td><td class="p "></td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC02</b> Revisar e divulgar vaga</td><td class="p fc">F/C</td><td class="p c">C</td><td class="p "></td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC03</b> Consultar vagas e candidatar-se</td><td class="p "></td><td class="p "></td><td class="p fc">F/C</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC04</b> Acompanhar processo seletivo</td><td class="p fc">F/C</td><td class="p fc">F/C</td><td class="p c">C</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC05</b> Agendar entrevista</td><td class="p f">F</td><td class="p f">F</td><td class="p c">C</td><td class="p "></td><td class="p c">C</td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC06</b> Confirmar vínculo com a IE</td><td class="p fc">F/C</td><td class="p "></td><td class="p "></td><td class="p fc">F/C</td><td class="p c">C</td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC07</b> Registrar contratação</td><td class="p f">F</td><td class="p c">C</td><td class="p c">C</td><td class="p c">C</td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC08</b> Manter plano de atividades</td><td class="p "></td><td class="p f">F</td><td class="p c">C</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC09</b> Registrar avaliação periódica</td><td class="p c">C</td><td class="p f">F</td><td class="p c">C</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC10</b> Notificar prazos a vencer</td><td class="p c">C</td><td class="p c">C</td><td class="p "></td><td class="p c">C</td><td class="p c">C</td><td class="p f">F</td></tr>
+<tr class=""><td class="uc"><b>UC11</b> Registrar encerramento ou prorrogação</td><td class="p f">F</td><td class="p f">F</td><td class="p c">C</td><td class="p c">C</td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC12</b> Consultar situação do estágio</td><td class="p "></td><td class="p "></td><td class="p c">C</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class=""><td class="uc"><b>UC13</b> Gerar relatórios de acompanhamento</td><td class="p fc">F/C</td><td class="p "></td><td class="p "></td><td class="p c">C</td><td class="p "></td><td class="p "></td></tr>
+<tr class="grupo"><td colspan="7">Casos de uso adicionais, a validar com os usuários</td></tr>
+<tr class="extra"><td class="uc"><b>UC14</b> Autenticar e gerir perfis de acesso</td><td class="p f">F</td><td class="p f">F</td><td class="p f">F</td><td class="p f">F</td><td class="p "></td><td class="p "></td></tr>
+<tr class="extra"><td class="uc"><b>UC15</b> Manter instituições de ensino</td><td class="p f">F</td><td class="p "></td><td class="p "></td><td class="p c">C</td><td class="p "></td><td class="p "></td></tr>
+<tr class="extra"><td class="uc"><b>UC16</b> Registrar relatório de atividades</td><td class="p "></td><td class="p fc">F/C</td><td class="p f">F</td><td class="p c">C</td><td class="p "></td><td class="p "></td></tr>
+<tr class="extra"><td class="uc"><b>UC17</b> Gerir documentos do contrato</td><td class="p f">F</td><td class="p "></td><td class="p fc">F/C</td><td class="p fc">F/C</td><td class="p "></td><td class="p "></td></tr>
+<tr class="extra"><td class="uc"><b>UC18</b> Registrar recesso do estagiário</td><td class="p c">C</td><td class="p f">F</td><td class="p fc">F/C</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class="extra"><td class="uc"><b>UC19</b> Desistir de candidatura</td><td class="p c">C</td><td class="p c">C</td><td class="p f">F</td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+<tr class="extra"><td class="uc"><b>UC20</b> Configurar parâmetros do programa</td><td class="p f">F</td><td class="p "></td><td class="p "></td><td class="p "></td><td class="p "></td><td class="p "></td></tr>
+</tbody></table>
+<p>A leitura por coluna resume as responsabilidades. O <b>gestor</b> é o maior fornecedor durante o contrato (UC08, UC09 e UC11). O <b>RH</b> alterna entre os dois papéis, porque recebe informações e decide sobre elas. O <b>estudante</b> é principalmente consumidor depois de contratado, e só fornece dados na candidatura. O <b>Serviço de E-mail</b> é sempre consumidor. O <b>Temporizador</b> só fornece o evento que inicia o UC10.</p>
+
+<h2 class="quebra">7. Diagrama UML de casos de uso</h2>
+<p class="legenda">O diagrama resume a tabela da seção 6. A seta aponta para onde a informação vai: do ator para o caso de uso quando ele é <b>fornecedor</b>, do caso de uso para o ator quando é <b>consumidor</b>, e nos dois sentidos quando é F/C. A linha tracejada «extend» indica que o UC05 é um comportamento opcional do UC04.</p>
+<svg viewBox="0 0 760 968" xmlns="http://www.w3.org/2000/svg" class="uml"><rect x="218.0" y="40" width="324" height="916" class="fronteira"/><text x="380.0" y="62" class="sistema">Sistema de Gestão de Programas de Estágio</text><line x1="84.0" y1="268.0" x2="253.6" y2="113.3" class="assoc"/><polyline points="246.0,115.9 253.6,113.3 250.4,120.7" class="ponta"/><line x1="84.0" y1="668.0" x2="253.6" y2="106.7" class="assoc"/><polyline points="89.2,662.0 84.0,668.0 83.0,660.1" class="ponta"/><line x1="84.0" y1="672.0" x2="253.6" y2="170.7" class="assoc"/><polyline points="248.2,176.5 253.6,170.7 254.4,178.6" class="ponta"/><polyline points="89.4,666.1 84.0,672.0 83.3,664.0" class="ponta"/><line x1="84.0" y1="272.5" x2="253.6" y2="177.3" class="assoc"/><polyline points="92.0,271.8 84.0,272.5 88.8,266.1" class="ponta"/><line x1="676.0" y1="308.5" x2="508.0" y2="238.0" class="assoc"/><polyline points="513.5,243.8 508.0,238.0 516.0,237.8" class="ponta"/><polyline points="670.5,302.7 676.0,308.5 668.0,308.7" class="ponta"/><line x1="84.0" y1="676.0" x2="253.6" y2="298.7" class="assoc"/><polyline points="247.7,304.0 253.6,298.7 253.6,306.7" class="ponta"/><polyline points="90.0,670.7 84.0,676.0 84.0,668.0" class="ponta"/><line x1="84.0" y1="277.0" x2="253.6" y2="305.3" class="assoc"/><polyline points="247.0,300.9 253.6,305.3 245.9,307.4" class="ponta"/><polyline points="90.7,281.4 84.0,277.0 91.7,275.0" class="ponta"/><line x1="676.0" y1="313.5" x2="508.0" y2="302.0" class="assoc"/><polyline points="668.9,309.7 676.0,313.5 668.5,316.3" class="ponta"/><line x1="84.0" y1="680.0" x2="253.6" y2="362.7" class="assoc"/><polyline points="247.3,367.6 253.6,362.7 253.1,370.6" class="ponta"/><line x1="84.0" y1="281.5" x2="253.6" y2="369.3" class="assoc"/><polyline points="248.6,363.1 253.6,369.3 245.6,368.9" class="ponta"/><line x1="676.0" y1="318.5" x2="506.4" y2="369.3" class="assoc"/><polyline points="668.1,317.5 676.0,318.5 669.9,323.7" class="ponta"/><line x1="658.0" y1="771.0" x2="506.4" y2="362.7" class="assoc"/><polyline points="658.5,763.0 658.0,771.0 652.4,765.3" class="ponta"/><line x1="84.0" y1="684.0" x2="252.0" y2="430.0" class="assoc"/><polyline points="245.2,434.3 252.0,430.0 250.7,437.9" class="ponta"/><polyline points="90.8,679.7 84.0,684.0 85.3,676.1" class="ponta"/><line x1="676.0" y1="586.0" x2="506.4" y2="433.3" class="assoc"/><polyline points="509.6,440.7 506.4,433.3 514.0,435.8" class="ponta"/><polyline points="672.8,578.7 676.0,586.0 668.4,583.5" class="ponta"/><line x1="658.0" y1="776.0" x2="506.4" y2="426.7" class="assoc"/><polyline points="658.1,768.0 658.0,776.0 652.1,770.6" class="ponta"/><line x1="84.0" y1="688.0" x2="253.6" y2="490.7" class="assoc"/><polyline points="246.4,494.1 253.6,490.7 251.3,498.3" class="ponta"/><line x1="84.0" y1="286.0" x2="253.6" y2="497.3" class="assoc"/><polyline points="86.0,293.7 84.0,286.0 91.1,289.7" class="ponta"/><line x1="676.0" y1="323.5" x2="506.4" y2="497.3" class="assoc"/><polyline points="668.6,326.4 676.0,323.5 673.2,331.0" class="ponta"/><line x1="676.0" y1="591.0" x2="506.4" y2="490.7" class="assoc"/><polyline points="671.4,584.5 676.0,591.0 668.1,590.1" class="ponta"/><line x1="84.0" y1="290.5" x2="252.0" y2="558.0" class="assoc"/><polyline points="250.9,550.1 252.0,558.0 245.4,553.5" class="ponta"/><line x1="676.0" y1="328.5" x2="508.0" y2="558.0" class="assoc"/><polyline points="669.1,332.5 676.0,328.5 674.3,336.3" class="ponta"/><line x1="84.0" y1="295.0" x2="253.6" y2="625.3" class="assoc"/><polyline points="253.2,617.4 253.6,625.3 247.4,620.3" class="ponta"/><line x1="676.0" y1="333.5" x2="508.0" y2="622.0" class="assoc"/><polyline points="669.5,338.2 676.0,333.5 675.1,341.5" class="ponta"/><line x1="84.0" y1="692.0" x2="253.6" y2="618.7" class="assoc"/><polyline points="92.0,692.1 84.0,692.0 89.4,686.1" class="ponta"/><line x1="676.0" y1="896.0" x2="501.5" y2="679.4" class="assoc"/><polyline points="503.5,687.1 501.5,679.4 508.6,683.0" class="ponta"/><line x1="658.0" y1="781.0" x2="508.0" y2="686.0" class="assoc"/><polyline points="653.6,774.3 658.0,781.0 650.1,779.8" class="ponta"/><line x1="84.0" y1="696.0" x2="253.6" y2="682.7" class="assoc"/><polyline points="91.5,698.7 84.0,696.0 91.0,692.2" class="ponta"/><line x1="84.0" y1="299.5" x2="253.6" y2="689.3" class="assoc"/><polyline points="83.9,307.5 84.0,299.5 89.9,304.9" class="ponta"/><line x1="676.0" y1="596.0" x2="501.5" y2="692.6" class="assoc"/><polyline points="668.0,596.7 676.0,596.0 671.2,602.4" class="ponta"/><line x1="84.0" y1="700.0" x2="253.6" y2="746.7" class="assoc"/><polyline points="247.5,741.6 253.6,746.7 245.7,747.9" class="ponta"/><line x1="84.0" y1="304.0" x2="253.6" y2="753.3" class="assoc"/><polyline points="254.1,745.4 253.6,753.3 248.0,747.7" class="ponta"/><line x1="676.0" y1="338.5" x2="506.4" y2="753.3" class="assoc"/><polyline points="670.2,344.0 676.0,338.5 676.3,346.5" class="ponta"/><line x1="676.0" y1="601.0" x2="506.4" y2="746.7" class="assoc"/><polyline points="668.3,603.3 676.0,601.0 672.6,608.2" class="ponta"/><line x1="676.0" y1="343.5" x2="508.0" y2="814.0" class="assoc"/><polyline points="670.5,349.3 676.0,343.5 676.6,351.5" class="ponta"/><line x1="84.0" y1="704.0" x2="252.0" y2="878.0" class="assoc"/><polyline points="249.3,870.5 252.0,878.0 244.6,875.0" class="ponta"/><polyline points="86.7,711.5 84.0,704.0 91.4,707.0" class="ponta"/><line x1="676.0" y1="606.0" x2="508.0" y2="878.0" class="assoc"/><polyline points="669.4,610.5 676.0,606.0 674.9,613.9" class="ponta"/><ellipse cx="380.0" cy="110" rx="128" ry="21" class="uc"/><text x="380.0" y="107" class="cod">UC01</text><text x="380.0" y="121" class="nome">Solicitar abertura de vaga</text><ellipse cx="380.0" cy="174" rx="128" ry="21" class="uc"/><text x="380.0" y="171" class="cod">UC02</text><text x="380.0" y="185" class="nome">Revisar e divulgar vaga</text><ellipse cx="380.0" cy="238" rx="128" ry="21" class="uc"/><text x="380.0" y="235" class="cod">UC03</text><text x="380.0" y="249" class="nome">Consultar vagas e candidatar-se</text><ellipse cx="380.0" cy="302" rx="128" ry="21" class="uc"/><text x="380.0" y="299" class="cod">UC04</text><text x="380.0" y="313" class="nome">Acompanhar processo seletivo</text><ellipse cx="380.0" cy="366" rx="128" ry="21" class="uc"/><text x="380.0" y="363" class="cod">UC05</text><text x="380.0" y="377" class="nome">Agendar entrevista</text><ellipse cx="380.0" cy="430" rx="128" ry="21" class="uc"/><text x="380.0" y="427" class="cod">UC06</text><text x="380.0" y="441" class="nome">Confirmar vínculo com a IE</text><ellipse cx="380.0" cy="494" rx="128" ry="21" class="uc"/><text x="380.0" y="491" class="cod">UC07</text><text x="380.0" y="505" class="nome">Registrar contratação</text><ellipse cx="380.0" cy="558" rx="128" ry="21" class="uc"/><text x="380.0" y="555" class="cod">UC08</text><text x="380.0" y="569" class="nome">Manter plano de atividades</text><ellipse cx="380.0" cy="622" rx="128" ry="21" class="uc"/><text x="380.0" y="619" class="cod">UC09</text><text x="380.0" y="633" class="nome">Registrar avaliação periódica</text><ellipse cx="380.0" cy="686" rx="128" ry="21" class="uc"/><text x="380.0" y="683" class="cod">UC10</text><text x="380.0" y="697" class="nome">Notificar prazos a vencer</text><ellipse cx="380.0" cy="750" rx="128" ry="21" class="uc"/><text x="380.0" y="747" class="cod">UC11</text><text x="380.0" y="761" class="nome">Registrar encerramento ou prorrogação</text><ellipse cx="380.0" cy="814" rx="128" ry="21" class="uc"/><text x="380.0" y="811" class="cod">UC12</text><text x="380.0" y="825" class="nome">Consultar situação do estágio</text><ellipse cx="380.0" cy="878" rx="128" ry="21" class="uc"/><text x="380.0" y="875" class="cod">UC13</text><text x="380.0" y="889" class="nome">Gerar relatórios de acompanhamento</text><line x1="380.0" y1="345" x2="380.0" y2="324" class="tracejada"/><polyline points="377.1,330.4 380.0,324.0 382.9,330.4" class="ponta"/><text x="388.0" y="338.0" class="estereo" text-anchor="start">«extend»</text><g><circle cx="62" cy="264" r="9" class="traco"/><line x1="62" y1="273" x2="62" y2="298" class="traco"/><line x1="47" y1="282" x2="77" y2="282" class="traco"/><line x1="62" y1="298" x2="50" y2="316" class="traco"/><line x1="62" y1="298" x2="74" y2="316" class="traco"/><text x="62" y="334" class="ator">Gestor da área</text></g><g><circle cx="62" cy="664" r="9" class="traco"/><line x1="62" y1="673" x2="62" y2="698" class="traco"/><line x1="47" y1="682" x2="77" y2="682" class="traco"/><line x1="62" y1="698" x2="50" y2="716" class="traco"/><line x1="62" y1="698" x2="74" y2="716" class="traco"/><text x="62" y="734" class="ator">Analista de RH</text></g><g><circle cx="698" cy="304" r="9" class="traco"/><line x1="698" y1="313" x2="698" y2="338" class="traco"/><line x1="683" y1="322" x2="713" y2="322" class="traco"/><line x1="698" y1="338" x2="686" y2="356" class="traco"/><line x1="698" y1="338" x2="710" y2="356" class="traco"/><text x="698" y="374" class="ator">Estudante</text></g><g><circle cx="698" cy="574" r="9" class="traco"/><line x1="698" y1="583" x2="698" y2="608" class="traco"/><line x1="683" y1="592" x2="713" y2="592" class="traco"/><line x1="698" y1="608" x2="686" y2="626" class="traco"/><line x1="698" y1="608" x2="710" y2="626" class="traco"/><text x="698" y="644" class="ator">Coordenador</text><text x="698" y="657" class="ator">da IE</text></g><g><rect x="660" y="756" width="76" height="48" class="caixa"/><text x="698" y="774" class="estereo">«sistema»</text><text x="698" y="790" class="icone">✉</text><text x="698" y="820" class="ator">Serviço</text><text x="698" y="833" class="ator">de E-mail</text></g><g><circle cx="698" cy="874" r="9" class="traco"/><line x1="698" y1="883" x2="698" y2="908" class="traco"/><line x1="683" y1="892" x2="713" y2="892" class="traco"/><line x1="698" y1="908" x2="686" y2="926" class="traco"/><line x1="698" y1="908" x2="710" y2="926" class="traco"/><text x="698" y="856" class="estereo">«tempo»</text><text x="698" y="944" class="ator">Temporizador</text></g></svg>
+<div class="fig">Figura 1 — Casos de uso requeridos (UC01–UC13)</div>
+
+<div class="quebra"></div>
+<svg viewBox="0 0 760 584" xmlns="http://www.w3.org/2000/svg" class="uml"><rect x="218.0" y="40" width="324" height="532" class="fronteira"/><text x="380.0" y="62" class="sistema">Casos de uso adicionais propostos</text><line x1="84.0" y1="403.5" x2="253.6" y2="106.7" class="assoc"/><polyline points="247.2,111.4 253.6,106.7 252.8,114.6" class="ponta"/><line x1="84.0" y1="178.5" x2="253.6" y2="113.3" class="assoc"/><polyline points="245.6,112.9 253.6,113.3 248.0,119.0" class="ponta"/><line x1="676.0" y1="156.0" x2="506.4" y2="113.3" class="assoc"/><polyline points="512.7,118.3 506.4,113.3 514.2,112.0" class="ponta"/><line x1="676.0" y1="368.5" x2="506.4" y2="106.7" class="assoc"/><polyline points="507.6,114.6 506.4,106.7 513.1,111.0" class="ponta"/><line x1="84.0" y1="408.5" x2="252.0" y2="174.0" class="assoc"/><polyline points="245.1,178.0 252.0,174.0 250.4,181.8" class="ponta"/><line x1="676.0" y1="373.5" x2="508.0" y2="174.0" class="assoc"/><polyline points="673.8,365.8 676.0,373.5 668.8,370.0" class="ponta"/><line x1="676.0" y1="161.0" x2="506.4" y2="241.3" class="assoc"/><polyline points="514.4,241.2 506.4,241.3 511.6,235.3" class="ponta"/><line x1="84.0" y1="183.5" x2="252.0" y2="238.0" class="assoc"/><polyline points="246.1,232.6 252.0,238.0 244.0,238.8" class="ponta"/><polyline points="89.9,188.9 84.0,183.5 92.0,182.7" class="ponta"/><line x1="676.0" y1="378.5" x2="506.4" y2="234.7" class="assoc"/><polyline points="672.5,371.3 676.0,378.5 668.3,376.3" class="ponta"/><line x1="84.0" y1="413.5" x2="252.0" y2="302.0" class="assoc"/><polyline points="244.1,303.3 252.0,302.0 247.7,308.8" class="ponta"/><line x1="676.0" y1="166.0" x2="506.4" y2="305.3" class="assoc"/><polyline points="514.1,303.2 506.4,305.3 509.9,298.2" class="ponta"/><polyline points="668.3,168.1 676.0,166.0 672.4,173.2" class="ponta"/><line x1="676.0" y1="383.5" x2="506.4" y2="298.7" class="assoc"/><polyline points="511.4,304.8 506.4,298.7 514.4,299.0" class="ponta"/><polyline points="670.9,377.3 676.0,383.5 668.0,383.1" class="ponta"/><line x1="84.0" y1="188.5" x2="253.6" y2="369.3" class="assoc"/><polyline points="251.0,361.8 253.6,369.3 246.3,366.2" class="ponta"/><line x1="676.0" y1="171.0" x2="508.0" y2="366.0" class="assoc"/><polyline points="515.2,362.6 508.0,366.0 510.3,358.3" class="ponta"/><polyline points="668.8,174.4 676.0,171.0 673.7,178.7" class="ponta"/><line x1="84.0" y1="418.5" x2="253.6" y2="362.7" class="assoc"/><polyline points="92.0,419.3 84.0,418.5 89.9,413.1" class="ponta"/><line x1="676.0" y1="176.0" x2="508.0" y2="430.0" class="assoc"/><polyline points="514.8,425.7 508.0,430.0 509.3,422.1" class="ponta"/><line x1="84.0" y1="423.5" x2="253.6" y2="426.7" class="assoc"/><polyline points="91.2,426.9 84.0,423.5 91.4,420.4" class="ponta"/><line x1="84.0" y1="193.5" x2="253.6" y2="433.3" class="assoc"/><polyline points="85.6,201.3 84.0,193.5 90.9,197.6" class="ponta"/><line x1="84.0" y1="428.5" x2="252.0" y2="494.0" class="assoc"/><polyline points="246.4,488.3 252.0,494.0 244.0,494.4" class="ponta"/><ellipse cx="380.0" cy="110" rx="128" ry="21" class="uc"/><text x="380.0" y="107" class="cod">UC14</text><text x="380.0" y="121" class="nome">Autenticar e gerir perfis de acesso</text><ellipse cx="380.0" cy="174" rx="128" ry="21" class="uc"/><text x="380.0" y="171" class="cod">UC15</text><text x="380.0" y="185" class="nome">Manter instituições de ensino</text><ellipse cx="380.0" cy="238" rx="128" ry="21" class="uc"/><text x="380.0" y="235" class="cod">UC16</text><text x="380.0" y="249" class="nome">Registrar relatório de atividades</text><ellipse cx="380.0" cy="302" rx="128" ry="21" class="uc"/><text x="380.0" y="299" class="cod">UC17</text><text x="380.0" y="313" class="nome">Gerir documentos do contrato</text><ellipse cx="380.0" cy="366" rx="128" ry="21" class="uc"/><text x="380.0" y="363" class="cod">UC18</text><text x="380.0" y="377" class="nome">Registrar recesso do estagiário</text><ellipse cx="380.0" cy="430" rx="128" ry="21" class="uc"/><text x="380.0" y="427" class="cod">UC19</text><text x="380.0" y="441" class="nome">Desistir de candidatura</text><ellipse cx="380.0" cy="494" rx="128" ry="21" class="uc"/><text x="380.0" y="491" class="cod">UC20</text><text x="380.0" y="505" class="nome">Configurar parâmetros do programa</text><g><circle cx="62" cy="164" r="9" class="traco"/><line x1="62" y1="173" x2="62" y2="198" class="traco"/><line x1="47" y1="182" x2="77" y2="182" class="traco"/><line x1="62" y1="198" x2="50" y2="216" class="traco"/><line x1="62" y1="198" x2="74" y2="216" class="traco"/><text x="62" y="234" class="ator">Gestor da área</text></g><g><circle cx="62" cy="394" r="9" class="traco"/><line x1="62" y1="403" x2="62" y2="428" class="traco"/><line x1="47" y1="412" x2="77" y2="412" class="traco"/><line x1="62" y1="428" x2="50" y2="446" class="traco"/><line x1="62" y1="428" x2="74" y2="446" class="traco"/><text x="62" y="464" class="ator">Analista de RH</text></g><g><circle cx="698" cy="144" r="9" class="traco"/><line x1="698" y1="153" x2="698" y2="178" class="traco"/><line x1="683" y1="162" x2="713" y2="162" class="traco"/><line x1="698" y1="178" x2="686" y2="196" class="traco"/><line x1="698" y1="178" x2="710" y2="196" class="traco"/><text x="698" y="214" class="ator">Estudante</text></g><g><circle cx="698" cy="354" r="9" class="traco"/><line x1="698" y1="363" x2="698" y2="388" class="traco"/><line x1="683" y1="372" x2="713" y2="372" class="traco"/><line x1="698" y1="388" x2="686" y2="406" class="traco"/><line x1="698" y1="388" x2="710" y2="406" class="traco"/><text x="698" y="424" class="ator">Coordenador</text><text x="698" y="437" class="ator">da IE</text></g></svg>
+<div class="fig">Figura 2 — Casos de uso adicionais propostos (UC14–UC20), com a mesma convenção de setas</div>
+
+<h2>8. Considerações finais</h2>
+<p>Os 12 requisitos funcionais do TP1 viraram 13 casos de uso. O caso extra (UC06) existe porque a RN03 exige uma interação própria com a instituição de ensino. Descrever os fluxos alternativos deixou claro onde cada regra de negócio atua: RN01 no UC04 e no UC07, RN02 no UC07 e no UC11, RN03 no UC06 e no UC07, e RN04 no UC11. Também apareceram lacunas que o TP1 não cobria, como a configuração dos parâmetros e o relatório de atividades exigido por lei, reunidas na seção 5 para validação com o cliente. O próximo passo, ainda no RUP, é priorizar esses casos de uso com o cliente e usá-los como base para o modelo de domínio e para as primeiras iterações de desenvolvimento do back-end.</p>
+
+</body>
+</html>
